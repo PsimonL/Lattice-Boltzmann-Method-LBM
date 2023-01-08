@@ -1,7 +1,8 @@
 from matplotlib import pyplot
 import numpy as np
+import matplotlib
 
-plot_every = 50
+plot_every = 100
 
 
 def distance(x1, y1, x2, y2):
@@ -9,8 +10,8 @@ def distance(x1, y1, x2, y2):
 
 
 def main():
-    Nx = 400  # cells of x dimension
-    Ny = 100  # same byt y
+    Nx = 200  # cells of x dimension
+    Ny = 50  # same byt y
     tau = .53
     Nt = 4000
 
@@ -28,12 +29,17 @@ def main():
 
     for y in range(0, Ny):
         for x in range(0, Nx):
-            if distance(0, Ny // 2, x, y) < 4:
+            # if distance(Nx//4, Ny // 2, x, y) < 20:
+            if distance(Nx // 2, Ny // 2, x, y) < 4:
                 cylinder[y][x] = True
 
     # main loop
     for it in range(Nt):
         print(it)
+
+        F[:, -1, [6, 7, 8]] = F[:, -2, [6, 7, 8]]
+        F[:, 0, [2, 3, 4]] = F[:, 1, [2, 3, 4]]
+
         for i, cx, cy, in zip(range(NL), cxs, cys):
             F[:, :, i] = np.roll(F[:, :, i], cx, axis=1)
             F[:, :, i] = np.roll(F[:, :, i], cy, axis=0)
@@ -52,7 +58,7 @@ def main():
             Feq[:, :, i] = rho * w * (1 + 3 * (cx * ux + cy * uy) + 9 * (cx * ux + cy * uy) ** 2 / 2 - 3 * (ux ** 2 + uy ** 2) / 2)
         F = F + -(1 / tau) * (F - Feq)
         if it % plot_every == 0:
-            pyplot.imshow(np.sqrt(ux ** 2 + uy ** 2), cmap="plasma")
+            pyplot.imshow(np.sqrt(ux ** 2 + uy ** 2), cmap = matplotlib.cm.get_cmap('plasma'))
             pyplot.pause(.01)
             pyplot.cla()
 
